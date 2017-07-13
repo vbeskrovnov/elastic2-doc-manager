@@ -240,6 +240,8 @@ class DocManager(DocManagerBase):
         if doc.get('create'):
             db, coll = self.command_helper.map_collection(db, doc['create'])
             if db and coll:
+                if not self.elastic.indices.exists(index=db.lower()):
+                    self.elastic.indices.create(index=db.lower())
                 self.elastic.indices.put_mapping(
                     index=db.lower(), doc_type=coll,
                     body={
